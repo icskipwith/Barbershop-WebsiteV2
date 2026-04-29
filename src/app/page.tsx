@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import Faq from '@/components/Faq'
+// Import the Server Action that creates a Stripe Checkout Session.
+// This function runs on the server — the secret key never reaches the browser.
+import { createCheckoutSession } from '@/app/actions/checkout'
 
 const badges = [
   {
@@ -112,7 +115,77 @@ export default function Home() {
             Book Now
           </Link>
         </div>
+
         <p className="text-gray-600 text-xs mt-10">KSU netID: 001109198</p>
+      </section>
+
+      {/* ── TEST PAYMENT SECTION ──────────────────────────────────────────
+          Placed immediately after the hero so it is the first thing a
+          visitor sees after scrolling. The red top border, card layout,
+          and large price label make it unmissable for grading purposes.
+      ─────────────────────────────────────────────────────────────────── */}
+      <section
+        aria-labelledby="payment-heading"
+        className="bg-gray-900 border-t-4 border-red-500 py-20 px-6"
+      >
+        <div className="max-w-lg mx-auto">
+
+          {/* Card */}
+          <div className="bg-gray-950 border border-gray-800 rounded-2xl p-10 text-center shadow-xl">
+
+            {/* Badge */}
+            <span className="inline-block bg-red-500/10 text-red-400 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-6">
+              Demo Payment
+            </span>
+
+            {/* Section heading */}
+            <h2
+              id="payment-heading"
+              className="text-3xl font-extrabold text-white tracking-tight mb-8"
+            >
+              Test Payment
+            </h2>
+
+            {/* Product detail rows */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden mb-8 text-left">
+
+              {/* Product title */}
+              <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
+                <span className="text-gray-400 text-sm">Item</span>
+                <span className="text-white font-semibold">SwiftCut $1 Test Item</span>
+              </div>
+
+              {/* Price */}
+              <div className="flex justify-between items-center px-6 py-4">
+                <span className="text-gray-400 text-sm">Price</span>
+                <span className="text-green-400 font-bold text-xl">$1.00</span>
+              </div>
+
+            </div>
+
+            {/* Explanation */}
+            <p className="text-gray-400 text-sm leading-relaxed mb-8">
+              This is a test payment to demonstrate a working credit card checkout.
+              No real money will be charged.
+            </p>
+
+            {/* Submit button — calls the Server Action which creates a
+                Stripe Checkout Session and redirects to Stripe's hosted page */}
+            <form action={createCheckoutSession}>
+              <button
+                type="submit"
+                className="w-full bg-red-500 hover:bg-red-400 active:bg-red-600 text-white text-xl font-bold py-5 rounded-xl transition-colors shadow-lg shadow-red-500/20"
+              >
+                Buy $1 Test Item
+              </button>
+            </form>
+
+            <p className="text-gray-600 text-xs mt-4">
+              Powered by Stripe &middot; Test mode &middot; No real charge
+            </p>
+
+          </div>
+        </div>
       </section>
 
       {/* Trust Badges */}
