@@ -5,14 +5,15 @@
 import Stripe from 'stripe'
 import { redirect } from 'next/navigation'
 
-// Initialize the Stripe client using the secret key from your environment variables.
-// The "!" at the end tells TypeScript: "I know this variable exists."
-// If STRIPE_SECRET_KEY is missing, Stripe will throw an error immediately.
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
 // This is a Server Action — a function that runs on the server when a form is submitted.
 // The homepage <form action={createCheckoutSession}> calls this automatically.
 export async function createCheckoutSession() {
+
+  // Initialize Stripe INSIDE the function so it only runs at request time,
+  // not at build time. Moving it outside caused Vercel's build to crash
+  // because environment variables are not available during the build step.
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
   // Ask Stripe to create a Checkout Session.
   // A Session represents one attempt to complete a purchase.
   const session = await stripe.checkout.sessions.create({
@@ -30,7 +31,7 @@ export async function createCheckoutSession() {
           // unit_amount is in CENTS. $1.00 = 100 cents.
           unit_amount: 100,
           product_data: {
-            name: '$1 Test Item',
+            name: 'SwiftCut $1 Test Item',
             description: 'A test payment for demonstration purposes.',
           },
         },
